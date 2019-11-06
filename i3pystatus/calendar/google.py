@@ -77,6 +77,7 @@ class Google(CalendarBackend):
 
     credentials_json = None
     days = 7
+    calendarIds = 'primary'
 
     def init(self):
         self.service = None
@@ -110,13 +111,10 @@ class Google(CalendarBackend):
         now = datetime.datetime.now(tz=pytz.UTC)
         try:
             now, later = self.get_timerange_formatted(now)
-            if not self.calendarIds:
-                self.calendarId = 'primary'
-
             self.events.clear()
             for calendarId in self.calendarIds.split(','):
                 events_result = self.service.events().list(
-                    calendarId=calendarId,
+                    calendarId=calendarId.trim(),
                     timeMin=now,
                     timeMax=later,
                     maxResults=10,
