@@ -75,7 +75,7 @@ class CalendarEvent:
     @property
     def humanize_time_remaining(self):
         if humanize_imported:
-            return humanize.naturaltime(datetime.now(tz=self.start.tzinfo) - self.start)
+            return 'In {}'.format(humanize.naturaldelta(datetime.now(tz=self.start.tzinfo) - self.start))
 
     def __str__(self):
         return "{}(title='{}', start={}, end={}, recurring={})" \
