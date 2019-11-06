@@ -48,19 +48,14 @@ class GoogleCalendarEvent(CalendarEvent):
 class Google(CalendarBackend):
     """
     Calendar backend for interacting with Google Calendar.
-
     Requires the Google Calendar API package - https://developers.google.com/google-apps/calendar/quickstart/python.
     Additionally requires the `colour`, `httplib2`, `oauth2client`, `pytz`, `google-api-python-client` and `dateutil` modules.
-
     The first time this module is ran, you will need to specify the location of `credentials.json` (as credentials_json)
     acquired from: https://developers.google.com/google-apps/calendar/quickstart/python
     this will open a browser window for auth, and save a token to `credential_path`. you will need to reload i3poystatus
     afterwards
-
     If you already have a token `credentials_json` is not required (though highly recomended incase your token gets broken)
-
     .. rubric:: Available formatters
-
     * `{kind}` — type of event
     * `{status}` — eg, confirmed
     * `{htmlLink}` — link to the calendar event
@@ -114,7 +109,7 @@ class Google(CalendarBackend):
             self.events.clear()
             for calendarId in self.calendarIds.split(','):
                 events_result = self.service.events().list(
-                    calendarId=calendarId.trim(),
+                    calendarId=calendarId.strip(),
                     timeMin=now,
                     timeMax=later,
                     maxResults=10,
@@ -124,6 +119,7 @@ class Google(CalendarBackend):
                 ).execute()
                 for event in events_result.get('items', []):
                     self.events.append(GoogleCalendarEvent(event))
+            self.events.sort(key=lambda event: event.start)
         except HttpError as e:
             if e.resp.status in (500, 503):
                 self.logger.warn("GoogleCalendar received %s while retrieving events" % e.resp.status)
